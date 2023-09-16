@@ -1,0 +1,4 @@
+[
+	{"key": "serial_port", "form": "text", "lbl": "Serial Port", "default": "/dev/ttyUSB0"},
+	{"key": "skip", "form": "checkbox", "lbl": "Skip build, only connect", "default": false }
+]

@@ -1,0 +1,118 @@
+/**
+ * Author: Hendrik van Arragon, 2023
+ * SPDX-License-Identifier: MIT
+ * 
+ * Small reference counting pointer for arduino 
+ */
+
+
+#ifndef _MEMORY_H_
+#define _MEMORY_H_
+
+#include "../avr-stl-master/include/memory"
+#include <cstdint>
+
+namespace std{
+
+template<class T>
+class shared_ptr{
+	T* object;
+	uint8_t* ref_count;
+
+public:
+	shared_ptr(){
+		ref_count = 0;
+		object = 0;
+	}
+	shared_ptr(T* p){
+		ref_count = new uint8_t(1);
+		object = p;
+	}
+	
+	shared_ptr(const shared_ptr& ref){
+		object = ref.object;
+		ref_count = ref.ref_count;
+		inc();
+	}
+	
+	template<class SRC>
+	shared_ptr(const shared_ptr<SRC>& ref){
+		object = ref.get();
+		ref_count = ref.ref_count_ptr();
+		inc();
+	}
+
+	~shared_ptr(){
+		dec();
+	}
+	operator bool() const{
+		if(object != 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	template<class SRC>
+	bool operator==(const shared_ptr<SRC>& ref){
+		return object==ref.get();
+	}
+
+	T* operator->() const{
+		return object;
+	}
+
+	T& operator*() const{
+		return *object;
+	}
+
+	shared_ptr<T>& operator=(const shared_ptr<T>& ref){
+		dec();
+		object = ref.object;
+		ref_count = ref.ref_count;
+		inc();
+		return *this;
+	}
+
+	uint8_t count(){
+		return *ref_count;
+	}
+
+	T* get() const{
+		return object;
+	}
+
+	void reset(){
+		dec();
+		object = 0;
+		ref_count = 0;
+	}
+
+	void reset(T* p){
+		reset();
+		ref_count = new uint8_t(1);
+		object = p;
+	}
+private:
+
+	void inc(){
+		if(ref_count){
+			(*ref_count)++;
+		}
+	}
+
+	void dec(){
+		if(ref_count){
+			(*ref_count)--;
+			if(*ref_count == 0){
+				delete ref_count;
+				delete object;
+			}
+		}
+	}
+
+};
+
+} // namespace std
+
+#endif // _MEMORY_H_

@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#exit an any error
+set -e
+
+function get_config_var()
+{
+	cat config.json | grep "\"$1\"" | sed -e 's/.*": "//' -e 's/".*//'
+}
+
+SKIP=$(cat config.json | grep skip | sed -e "s/.*: //" -e 's/,.*$//')
+if [ "$SKIP" == "true" ]; then
+	exit 0
+fi
+
+###################################################
+# create main.h
+###################################################
+
+BAUD=$(get_config_var serial_baudrate)
+
+#create main.h
+NEW_HEADER="#ifndef INC_MAIN_H_
+#define INC_MAIN_H_
+
+#define SERIAL_BAUDRATE _S_B_
+
+#endif
+"
+NEW_HEADER=$(echo "$NEW_HEADER" | sed -e "s/_S_B_/$BAUD/" )
+echo "$NEW_HEADER" > main.h
+
+###################################################
+# Compile and flash
+###################################################
+PORT=$(get_config_var serial_port)
+
+echo building:
+scons
+avr-size -C --mcu=atmega328p main.elf
+avrdude -v -p atmega328p -c arduino -P $PORT -U flash:w:main.hex

@@ -1,0 +1,36 @@
+import json
+import os
+
+env = Environment(ENV = os.environ)
+#env.AppendENVPath('PATH', '/opt/...')
+
+config_file = open('config.json', 'r')
+config = json.load(config_file)
+config_file.close()
+
+env["CC"]    = "avr-gcc"
+env["CXX"]   = "avr-g++"
+env["LD"]    = "avr-g++"
+env["AR"]    = "avr-ar"
+env["STRIP"] = "avr-strip"
+
+env.Append(ASFLAGS   = ['-flto'])
+env.Append(CCFLAGS   = ['-w','-Os','-g', '-flto', '-mmcu=atmega328p', '-fpermissive', '-DF_CPU=16000000UL', '-MMD', '-MP', '-ffunction-sections', '-fdata-sections'])
+env.Append(CXXFLAGS  = ['-std=c++14', '-fno-rtti', '-fno-threadsafe-statics'])
+env.Append(CPPPATH   = [ '.', 'libstd', 'shared-avr', 'shared', 'avr-stl-master/include'])
+env.Append(LINKFLAGS = ['-mmcu=atmega328p', '-flto', '-Wl,--gc-sections', '-Wl,-Map=${TARGET.base}.map'])
+
+
+cpl_info_file = open('model/compile_info.json', 'r')
+cpl_info = json.load(cpl_info_file)
+cpl_info_file.close()
+
+runtime_src = []
+
+libs = [ cpl_info['libs'] ]
+src  = ["main.cpp", "rt/mutex.cpp", "rt/uart_com.cpp", "rt/irq_helper.cpp", "libstd/lib_cpp.cpp", "libstd/string.cpp", 'rt/model_adapter_tiny.cpp', 'shared-avr/vec.cpp', 'shared-avr/mat.cpp',  'shared-avr/serialize.cpp', 'shared-avr/time.cpp', cpl_info['sources']]
+obj  = env.Object(src)
+
+env.Program("main.elf", [obj],  LIBS=libs, LIBPATH=[])
+
+env.AddPostAction("main.elf", "avr-objcopy -O ihex main.elf main.hex");

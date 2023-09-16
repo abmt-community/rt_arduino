@@ -1,0 +1,25 @@
+/**
+ * Author: Hendrik van Arragon, 2023
+ * SPDX-License-Identifier: MIT
+ */
+#ifndef _STRING_AVR
+#define _STRING_AVR 1
+
+#include "../avr-stl-master/include/string"
+#include <cstring>
+#include <cstdint>
+
+namespace std{
+
+std::string to_string( int value );
+std::string to_string( long value );
+std::string to_string( long long value );
+std::string to_string( unsigned value );
+std::string to_string( unsigned long value );
+std::string to_string( unsigned long long value );
+std::string to_string( float value );
+std::string to_string( double value );
+
+}
+
+#endif
