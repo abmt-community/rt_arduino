@@ -4,7 +4,7 @@ apt-get install gcc-avr binutils-avr scons avrdude
 
 Limitations
 ===========
-- state machines are not supported
+- 2K of ram does not allow many nodes and viewd signals
 - img is not supported.
 - time: date not supported (missing <ctime>)
 
