@@ -1,6 +1,6 @@
 Depenencies
 ===========
-apt-get install gcc-avr binutils-avr scons avrdude
+apt-get install gcc-avr binutils-avr scons avrdude avr-libc
 
 Limitations
 ===========
@@ -12,6 +12,13 @@ Disclaimer
 ==========
 This is just a prove of concept to try how small a abmt runtime can get. 
 Do not use this as a template for other microcontrollers apart from AVR's. Use the mbed implementation instead. Risc-V is the new 8-bit.
+
+Windows/WSL Notes
+=================
+https://learn.microsoft.com/en-us/windows/wsl/connect-usb
+
+``usbipd wsl list``
+``usbipd wsl attach --busid <busid>``
 
 Implementation Details
 ======================
