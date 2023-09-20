@@ -18,6 +18,7 @@ Windows/WSL Notes
 https://learn.microsoft.com/en-us/windows/wsl/connect-usb
 
 ``usbipd wsl list``
+
 ``usbipd wsl attach --busid <busid>``
 
 Implementation Details
