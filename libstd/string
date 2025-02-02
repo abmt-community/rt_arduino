@@ -8,6 +8,7 @@
 #include "../avr-stl-master/include/string"
 #include <cstring>
 #include <cstdint>
+#include <stdio.h>
 
 namespace std{
 
@@ -19,6 +20,11 @@ std::string to_string( unsigned long value );
 std::string to_string( unsigned long long value );
 std::string to_string( float value );
 std::string to_string( double value );
+
+
+double stod(std::string& s);
+float  stof(std::string& s);
+int    stoi(std::string& s);
 
 }
 

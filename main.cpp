@@ -19,22 +19,20 @@
 
 #include "model/model.h"
 
-void abmt::log(std::string s){
+void abmt::log(std::string_view s){
 	adapter->log(s);
 }
-void abmt::log_err(std::string s){
-	adapter->log_err(s);
-}
-void abmt::die(std::string s){
-	abmt::log_err(s);
-	abmt::log_err("reset!");
+
+void abmt::die(std::string_view s){
+	abmt::log(s);
+	abmt::log("reset!");
 	wdt_enable(WDTO_250MS);
 	while(1){
 		// reset done by wdt
 	};
 }
 
-void abmt::die_if(bool condition, std::string msg){
+void abmt::die_if(bool condition, std::string_view msg){
 	if(condition){
 		abmt::die(msg);
 	}

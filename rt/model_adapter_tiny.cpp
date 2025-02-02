@@ -34,7 +34,7 @@ void model_adatper_tiny::set_model(abmt::rt::model* m){
 
 void model_adatper_tiny::on_hello(uint16_t version){
 	if(version != ABMT_VERSION){
-		log_err("e:version");
+		log("e:version");
 	}
 	connected = true;
 	def_idx = 0;
@@ -224,7 +224,7 @@ void model_adatper_tiny::on_set_parameter(abmt::blob& data){
 		}
 		save_parameters();
 	}else{
-		abmt::log_err("e:idx");
+		abmt::log("e:idx");
 	}
 };
 
@@ -281,22 +281,13 @@ void model_adatper_tiny::send(cmd id, maa_fifo_t& blk){
 	connection.send((uint8_t)id,blk.data, blk.bytes_used);
 }
 
-void model_adatper_tiny::log(std::string msg){
+void model_adatper_tiny::log(std::string_view msg){
 	uint32_t len = msg.length();
 	if(len > 100){
 		len = 100;
 	}
 	send(cmd::log,msg.c_str(),len);
 }
-
-void model_adatper_tiny::log_err(std::string msg){
-	uint32_t len = msg.length();
-	if(len > 100){
-		len = 100;
-	}
-	send(cmd::log_err,msg.c_str(),len);
-}
-
 
 void model_adatper_tiny::save_parameters(){
 	//on_save_parameters();

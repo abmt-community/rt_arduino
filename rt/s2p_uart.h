@@ -31,7 +31,7 @@ public:
 			return buffer.size;
 		}
 
-		const size_t header_size = 9;
+		const size_t header_size = 8;
 		const size_t crc_size = 2;
 
 		uint32_t bytes_availible = buffer.size;
@@ -59,11 +59,11 @@ public:
 			if(read_state == check_for_header){
 				if(bytes_availible >= header_size){
 					uint8_t header_check = buffer.get<uint8_t>(bytes_to_pop + 0) ^ buffer.get<uint8_t>(bytes_to_pop + 1) ^ buffer.get<uint8_t>(bytes_to_pop + 2) ^ buffer.get<uint8_t>( bytes_to_pop +3);
-					header_check        ^= buffer.get<uint8_t>(bytes_to_pop + 4) ^ buffer.get<uint8_t>(bytes_to_pop + 5) ^ buffer.get<uint8_t>(bytes_to_pop + 6) ^ buffer.get<uint8_t>( bytes_to_pop +7);
+					header_check        ^= buffer.get<uint8_t>(bytes_to_pop + 4) ^ buffer.get<uint8_t>(bytes_to_pop + 5) ^ buffer.get<uint8_t>(bytes_to_pop + 6);
 					bool type_ok = buffer.get<uint8_t>(bytes_to_pop + 1) == 'A';
-					bool hdr_chk_ok = buffer.get<uint8_t>(bytes_to_pop + 8) == header_check;
+					bool hdr_chk_ok = buffer.get<uint8_t>(bytes_to_pop + 7) == header_check;
 					if( type_ok && hdr_chk_ok ){
-						current_pack_size = buffer.get<uint32_t>(bytes_to_pop + 4);
+						current_pack_size = buffer.get<uint32_t>(bytes_to_pop + 3);
 						current_id = buffer.get<uint8_t>(bytes_to_pop + 2);
 						read_state = wait_for_pack;
 					}else{
@@ -109,19 +109,18 @@ public:
 	void send(uint8_t id, const void* data, uint32_t size){
 		static uint8_t seed = 0;
 
-		char header[9]; // start + type + id + seed + size + header_check
+		char header[8]; // start + type + id + size + header_check
 		header[0] = 'U';
 		header[1] = 'A';
 		header[2] = id;
-		header[3] = seed;
-		uint8_t header_check = header[0] ^ header[1] ^ header[2] ^ header[3];
+		uint8_t header_check = header[0] ^ header[1] ^ header[2];
 		char* size_as_char = (char*)&size;
 		for(unsigned int i = 0; i < sizeof(size); ++i){
-			header[4 + i] = size_as_char[i];
+			header[3 + i] = size_as_char[i];
 			header_check ^= size_as_char[i];
 		}
-		header[8] = header_check;
-		uart_write(header,9);
+		header[7] = header_check;
+		uart_write(header,8);
 
 		// Data
 		uart_write(data,size);

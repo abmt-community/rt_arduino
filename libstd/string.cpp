@@ -4,6 +4,7 @@
  */
 #include <string>
 #include <stdio.h>
+#include <stdlib.h>
 
 namespace std{
 
@@ -53,6 +54,18 @@ std::string to_string( double value ){
     char buff[20];
     snprintf(buff, sizeof(buff),"%f",value);
     return buff;
+}
+
+double stod(std::string& s){
+    return atof(s.c_str());
+}
+
+float stof(std::string& s){
+    return atof(s.c_str());
+}
+
+int stoi(std::string& s){
+    return atoi(s.c_str());
 }
 
 }//namespace std

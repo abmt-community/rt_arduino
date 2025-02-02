@@ -129,9 +129,7 @@ public:
 
 	virtual void send(abmt::rt::cmd id, maa_fifo_t& blk);
 
-	virtual void log(std::string msg);
-
-	virtual void log_err(std::string msg);
+	virtual void log(std::string_view msg);
 
 
 	void save_parameters();

@@ -12,8 +12,8 @@
 #define GET_BIT(REG, BIT)  ((REG >> BIT) & 1)
 #define UBRR(BAUD) (F_CPU/16/BAUD-1)
 
-fifo<60> uart_in_buffer;
-fifo<60> uart_out_buffer;
+fifo<160> uart_in_buffer;
+fifo<160> uart_out_buffer;
 uint8_t out_bytes_to_pop = 0;
 
 static bool sending = false;
